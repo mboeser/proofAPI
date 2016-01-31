@@ -18,6 +18,7 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
         $scope.videos = orderBy($scope.videos, predicate, $scope.reverse);
     };
 
+
     $scope.newVideo = function(newVideoForm) {
         console.log(newVideoForm);
 
@@ -66,7 +67,8 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
     $scope.getVideos = function () {
         $http.get('https://proofapi.herokuapp.com/videos',{headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
             $scope.videos = response.data.data;
-            console.log(response.data.data);
+            console.log($scope.videos);
+            $scope.order('attributes.created_at');
         });
     };
 

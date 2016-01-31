@@ -30,19 +30,24 @@
             #
         </th>
         <th>
-            Video Title
+            <span role="button" ng-click="order('attributes.title')">Video Title</span>
+            <span ng-show="predicate === 'attributes.title'" ng-class="reverse ? 'glyphicon glyphicon-menu-down' : 'glyphicon glyphicon-menu-up'"></span>
         </th>
         <th>
-            <button class="btn btn-default" ng-click="order('view_tally')">Total Views</button>
+            <span role="button" ng-click="order('attributes.view_tally')">Total Views</span>
+            <span ng-show="predicate === 'attributes.view_tally'" ng-class="reverse ? 'glyphicon glyphicon-menu-up' : 'glyphicon glyphicon-menu-down'"></span>
+
         </th>
         <th>
-            <button class="btn btn-default" ng-click="order('vote_tally')">Total Votes</button>
+            <span role="button" ng-click="order('attributes.vote_tally')">Total Votes</span>
+            <span ng-show="predicate === 'attributes.vote_tally'" ng-class="reverse ? 'glyphicon glyphicon-menu-up' : 'glyphicon glyphicon-menu-down'"></span>
         </th>
         <th>
             Vote
         </th>
         <th>
-            Date Added
+            <span role="button" ng-click="order('attributes.created_at')">Date Added</span>
+            <span ng-show="predicate === 'attributes.created_at'" ng-class="reverse ? 'glyphicon glyphicon-menu-up' : 'glyphicon glyphicon-menu-down'"></span>
         </th>
     </tr>
     </thead>
@@ -50,7 +55,7 @@
     <tr ng-repeat="video in videos">
         <td>{{$index+1 + " "}}</td>
         <td class="text-uppercase"><a ng-click="viewOne(video)" ng-href="{{video.attributes.url}}" target="_blank">{{video.attributes.title}}</a></td>
-        <td>{{video.attributes.view_tally}}</td>
+        <td>{{video.attributes.view_tally + ' Views'}}</td>
         <td>{{video.attributes.vote_tally + ' Votes'}}</td>
         <td><div class="btn-group btn-group-xs" role="group"><button class="btn btn-success" ng-click="voteOne(video, 1)"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
         </button><button class="btn btn-danger" ng-click="voteOne(video, -1)"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button></div></td>
