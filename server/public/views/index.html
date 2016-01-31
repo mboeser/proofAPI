@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+
+    <title>Videos!</title>
+</head>
+<body ng-controller="myCtrl">
+<div class="container">
+    <h1>Hello World!</h1>
+
+    <form name="newVideoForm" ng-submit="newVideo(video)" class="form-inline">
+        <div class="form-group">
+            <label for="videoTitle">Title</label>
+            <input type="text" class="form-control" ng-model="video.title" id="videoTitle" placeholder="Enter Video Title" required>
+
+            <label for="videoUrl">Add a Video!</label>
+            <input type="url" class="form-control" ng-model="video.url" id="videoUrl" placeholder="Enter Video URL" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <div ng-repeat="video in videos | orderBy: '-attributes.created_at'">
+        <p><a ng-href="{{video.attributes.url}}">{{video.attributes.title}}</a> {{video.attributes.created_at | date
+            :'short'}}</p>
+    </div>
+
+</div>
+
+<script src="/scripts/angular.min.js"></script>
+<script src="/scripts/app.js"></script>
+</body>
+</html>
