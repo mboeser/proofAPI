@@ -23,11 +23,42 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-    <div ng-repeat="video in videos | orderBy: '-attributes.created_at'">
-        <p>{{$index+1 + " "}}<a ng-click="viewOne(video)" ng-href="{{video.attributes.url}}" target="_blank">{{video.attributes.title}}</a> {{video.attributes.created_at |
-            date:'short'}}{{' Total View' + ' ' + video.attributes.view_tally }}{{' Total Votes'+ " " + video.attributes.vote_tally}}</p><button ng-click="voteOne(video, 1)">UP</button><button ng-click="voteOne(video, -1)">DOWN</button>
-    </div>
-
+    <table class="table table-hover table-condensed">
+    <thead>
+    <tr>
+        <th>
+            #
+        </th>
+        <th>
+            Video Title
+        </th>
+        <th>
+            <button class="btn btn-default" ng-click="order('view_tally')">Total Views</button>
+        </th>
+        <th>
+            <button class="btn btn-default" ng-click="order('vote_tally')">Total Votes</button>
+        </th>
+        <th>
+            Vote
+        </th>
+        <th>
+            Date Added
+        </th>
+    </tr>
+    </thead>
+        <tbody>
+    <tr ng-repeat="video in videos">
+        <td>{{$index+1 + " "}}</td>
+        <td class="text-uppercase"><a ng-click="viewOne(video)" ng-href="{{video.attributes.url}}" target="_blank">{{video.attributes.title}}</a></td>
+        <td>{{video.attributes.view_tally}}</td>
+        <td>{{video.attributes.vote_tally + ' Votes'}}</td>
+        <td><div class="btn-group btn-group-xs" role="group"><button class="btn btn-success" ng-click="voteOne(video, 1)"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+        </button><button class="btn btn-danger" ng-click="voteOne(video, -1)"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button></div></td>
+        <td>{{video.attributes.created_at | date:'short'}}</td>
+    </tr>
+        </tbody>
+        <tfoot><tr></tr></tfoot>
+    </table>
 </div>
 
 <script src="/scripts/angular.min.js"></script>

@@ -1,11 +1,22 @@
 var myApp = angular.module('myApp', []);
 
-myApp.controller('myCtrl', ['$scope', '$http', function($scope, $http){
+myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http, $filter){
+
+    var orderBy = $filter('orderBy');
 
     $scope.video = {};
     $scope.view = {};
     $scope.vote = {};
     $scope.videos = [];
+
+    $scope.order = function(predicate) {
+
+        console.log(predicate);
+
+        $scope.predicate = predicate;
+        $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+        $scope.videos = orderBy($scope.videos, predicate, $scope.reverse);
+    };
 
     $scope.newVideo = function(newVideoForm) {
         console.log(newVideoForm);
