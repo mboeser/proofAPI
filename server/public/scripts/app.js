@@ -3,6 +3,7 @@ var myApp = angular.module('myApp', []);
 myApp.controller('myCtrl', ['$scope', '$http', function($scope, $http){
 
     $scope.video = {};
+    $scope.view = {};
     $scope.vote = {};
     $scope.videos = [];
 
@@ -25,14 +26,25 @@ myApp.controller('myCtrl', ['$scope', '$http', function($scope, $http){
 
     };
 
+    $scope.viewOne = function (vid) {
+        console.log(vid);
+
+        $scope.view = {
+            video_id: vid.id
+        };
+        $http.post('https://proofapi.herokuapp.com/views', $scope.view, {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
+            console.log('new view added', response);
+            $scope.getVideos();
+        });
+    };
+
+
     $scope.voteOne = function (vid, num) {
         console.log(vid);
 
         $scope.vote = {
             opinion: num
         };
-
-
         $http.post('https://proofapi.herokuapp.com/videos/' + vid.id + '/votes', $scope.vote, {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
             console.log('new vote added', response);
             $scope.getVideos();

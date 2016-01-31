@@ -24,8 +24,8 @@
     </form>
 
     <div ng-repeat="video in videos | orderBy: '-attributes.created_at'">
-        <p>{{$index+1 + " "}}<a ng-href="{{video.attributes.url}}">{{video.attributes.title}}</a> {{video.attributes.created_at |
-            date:'short'}}{{'Total Votes'+ " " + video.attributes.vote_tally}}</p><button ng-click="voteOne(video, 1)">UP</button><button ng-click="voteOne(video, -1)">DOWN</button>
+        <p>{{$index+1 + " "}}<a ng-click="viewOne(video)" ng-href="{{video.attributes.url}}" target="_blank">{{video.attributes.title}}</a> {{video.attributes.created_at |
+            date:'short'}}{{' Total View' + ' ' + video.attributes.view_tally }}{{' Total Votes'+ " " + video.attributes.vote_tally}}</p><button ng-click="voteOne(video, 1)">UP</button><button ng-click="voteOne(video, -1)">DOWN</button>
     </div>
 
 </div>
