@@ -18,6 +18,14 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
         $scope.videos = orderBy($scope.videos, predicate, $scope.reverse);
     };
 
+    $scope.isWeekend = function () {
+
+        var today = new Date(Date.now());
+
+        return /[12345]/.test(today.getDay());
+
+    };
+
 
     $scope.newVideo = function(newVideoForm) {
         console.log(newVideoForm);

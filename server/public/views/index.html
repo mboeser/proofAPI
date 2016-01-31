@@ -20,7 +20,7 @@
             <input type="url" class="form-control" ng-model="video.url" id="videoUrl" placeholder="Enter Video URL"
                    required>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button ng-disabled="isWeekend()" type="submit" class="btn btn-primary">Submit</button>
     </form>
 
     <table class="table table-hover table-condensed">
@@ -57,8 +57,8 @@
         <td class="text-uppercase"><a ng-click="viewOne(video)" ng-href="{{video.attributes.url}}" target="_blank">{{video.attributes.title}}</a></td>
         <td>{{video.attributes.view_tally + ' Views'}}</td>
         <td>{{video.attributes.vote_tally + ' Votes'}}</td>
-        <td><div class="btn-group btn-group-xs" role="group"><button class="btn btn-success" ng-click="voteOne(video, 1)"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-        </button><button class="btn btn-danger" ng-click="voteOne(video, -1)"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button></div></td>
+        <td><div class="btn-group btn-group-xs" role="group"><button class="btn btn-success" ng-disabled="isWeekend()" ng-click="voteOne(video, 1)"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></button>
+            <button class="btn btn-danger" ng-disabled="isWeekend()" ng-click="voteOne(video, -1)"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button></div></td>
         <td>{{video.attributes.created_at | date:'short'}}</td>
     </tr>
         </tbody>
