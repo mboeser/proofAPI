@@ -1,6 +1,6 @@
 var myApp = angular.module('myApp', []);
 
-myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http, $filter){
+myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $http, $filter) {
 
     var orderBy = $filter('orderBy');
 
@@ -8,8 +8,9 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
     $scope.view = {};
     $scope.vote = {};
     $scope.videos = [];
+    $scope.checked = false;
 
-    $scope.order = function(predicate) {
+    $scope.order = function (predicate) {
 
         console.log(predicate);
 
@@ -23,28 +24,44 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
         var today = new Date(Date.now());
 
         return /[12345]/.test(today.getDay());
-
     };
 
 
-    $scope.newVideo = function(newVideoForm) {
+    // Add a NEW video
+
+    $scope.newVideo = function (newVideoForm) {
         console.log(newVideoForm);
 
-        $scope.video = {
-            title: newVideoForm.title,
-            url: newVideoForm.url,
-            slug: newVideoForm.title.trim().toLowerCase().replace(/\ /gi, '-')
-        };
 
-        $http.post('https://proofapi.herokuapp.com/videos',$scope.video, {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
-            //$scope.videos = response.data.data;
-            console.log('new vid added', response);
+        $scope.videos.every( function(vid){
+            //console.log(vid);
+            if (vid.attributes.url == newVideoForm.url) {
+                console.log('its dup');
+                alert("Sorry, no duplicate videos allowed");
+                $scope.video = {};
+                return;
+            } else {
+
+                $scope.video = {
+                    title: newVideoForm.title,
+                    url: newVideoForm.url,
+                    slug: newVideoForm.title.trim().toLowerCase().replace(/\ /gi, '-')
+                };
+
+                $http.post('https://proofapi.herokuapp.com/videos', $scope.video, {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
+                    //$scope.videos = response.data.data;
+                    console.log('new vid added', response);
+                });
+                console.log($scope.video);
+                $scope.video = {};
+                $scope.getVideos();
+
+            }
+
         });
-            console.log($scope.video);
-            $scope.video = {};
-        $scope.getVideos();
-
     };
+
+    // Add ONE view
 
     $scope.viewOne = function (vid) {
         console.log(vid);
@@ -59,6 +76,8 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
     };
 
 
+    // Add or minus ONE vote
+
     $scope.voteOne = function (vid, num) {
         console.log(vid);
 
@@ -71,9 +90,9 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function($scope, $http
         });
     };
 
-    //GET
+    //GET all the videos
     $scope.getVideos = function () {
-        $http.get('https://proofapi.herokuapp.com/videos',{headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
+        $http.get('https://proofapi.herokuapp.com/videos', {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
             $scope.videos = response.data.data;
             console.log($scope.videos);
             $scope.order('attributes.created_at');
