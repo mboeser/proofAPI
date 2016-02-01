@@ -7,43 +7,68 @@
     <title>Videos!</title>
 </head>
 <body ng-controller="myCtrl">
-<div class="container">
-    <h1>Hello World!</h1>
+<div class="container-fluid">
+    <h1>Proof API Video Challenge!</h1>
+    <div class="row">
+        <form name="newVideoForm" ng-submit="newVideo(video)" class="form-inline" novalidate>
 
-    <form name="newVideoForm" ng-submit="newVideo(video)" class="form-inline" novalidate>
-        <div class="form-group"
-             ng-class="{ 'has-error' : newVideoForm.title.$invalid && !newVideoForm.title.$pristine }">
-            <label for="videoTitle">Title</label>
-            <input type="text" class="form-control" name="title" ng-model="video.title" id="videoTitle" placeholder="Enter Video Title" required>
+            <div class="col-md-6">
+                <div class="form-group"
+                     ng-class="{ 'has-error' : newVideoForm.title.$invalid && !newVideoForm.title.$pristine }">
+                    <label class="sr-only" for="videoTitle">Video Title</label>
+                    <input ng-disabled="isWeekBtnNum === 2" type="text" class="form-control" name="title" ng-model="video.title" id="videoTitle"
+                           placeholder="Enter Video Title" required>
+                </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error' : newVideoForm.url.$invalid && !newVideoForm.url.$pristine }">
+                    <label class="sr-only" for="videoUrl">Video URL</label>
+                    <input ng-disabled="isWeekBtnNum === 2" type="url" class="form-control" name="url" ng-model="video.url" id="videoUrl"
+                           placeholder="Enter Video URL" required>
+                </div>
+
+                <button ng-disabled="isWeekend() || newVideoForm.$invalid || checked" type="submit"
+                        class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                    Add Video
+                </button>
+            </div>
+        </form>
+
+        <div class="col-md-6">
+            <div class="btn-group" role="group">
+                <button ng-click="order('attributes.view_tally', true); limitNumber=10; activeButton(1)"
+                        ng-class="{'active': isActive === 1}" type="button" class="btn btn-default"><span
+                        class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> Top Ten Views
+                </button>
+                <button ng-click="order('attributes.vote_tally', true); limitNumber=10; activeButton(2)"
+                        ng-class="{'active': isActive === 2}" type="button" class="btn btn-default"><span
+                        class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Top Ten Votes
+                </button>
+                <button ng-click="getVideos(); activeButton(0)"
+                        ng-class="{'active': isActive === 0}" type="button" class="btn btn-default"><span
+                        class="glyphicon glyphicon-film" aria-hidden="true"></span> All Videos
+                </button>
+            </div>
+
+            <div class="btn-group" role="group">
+                <button ng-click="checked = false; activeWeekBtn(1)" ng-class="{'active': isWeekBtnNum === 1}"
+                        type="button" class="btn btn-default">Weekday
+                </button>
+                <button ng-click="checked = true; activeWeekBtn(2)" ng-class="{'active': isWeekBtnNum === 2}"
+                        type="button" class="btn btn-default">Weekend
+                </button>
+            </div>
         </div>
-        <div class="form-group" ng-class="{ 'has-error' : newVideoForm.url.$invalid && !newVideoForm.url.$pristine }">
-            <label for="videoUrl">Add a Video!</label>
-            <input type="url" class="form-control" name="url" ng-model="video.url" id="videoUrl" placeholder="Enter Video URL"  required>
+
+    </div>
+
+    <!--FORM VALIDATION ERRORS-->
+
+    <pre ng-show="newVideoForm.title.$invalid && !newVideoForm.title.$pristine" class="help-block text-warning">Video Title is required</pre>
+    <pre ng-show="newVideoForm.url.$invalid && !newVideoForm.url.$pristine" class="help-block text-warning">URL needs http://</pre>
+    <pre ng-show="isWeekBtnNum === 2" class="help-block text-warning">Sorry No Adding Videos or Voting on Weekends</pre>
 
 
-        </div>
-        <button ng-disabled="isWeekend() || newVideoForm.$invalid || checked" type="submit" class="btn btn-primary">Submit</button>
-
-
-        <!--<div class="btn-toolbar" role="toolbar">-->
-        <div class="btn-group" role="group">
-            <button ng-click="order('attributes.view_tally', true); limitNumber=10; activeButton(1)" ng-class="{'active': isActive === 1}" type="button" class="btn btn-default">Top Ten Views</button>
-            <button ng-click="order('attributes.vote_tally', true); limitNumber=10; activeButton(2)" ng-class="{'active': isActive === 2}" type="button" class="btn btn-default">Top Ten Votes</button>
-            <button ng-click="getVideos(); limitNumber=null; activeButton(0)" ng-class="{'active': isActive === 0}"" type="button" class="btn btn-default">All Videos</button>
-        </div>
-
-        <div class="btn-group btn-group" role="group">
-            <button ng-click="checked = false; activeWeekBtn(1)" ng-class="{'active': isWeekBtnNum === 1}" type="button" class="btn btn-default">Weekday</button>
-            <button ng-click="checked = true; activeWeekBtn(2)" ng-class="{'active': isWeekBtnNum === 2}" type="button" class="btn btn-default">Weekend</button>
-        </div>
-        <!--</div>-->
-
-        <!--FORM VALIDATION ERRORS-->
-
-        <pre ng-show="newVideoForm.title.$invalid && !newVideoForm.title.$pristine" class="help-block text-warning">Video Title is required</pre>
-        <pre ng-show="newVideoForm.url.$invalid && !newVideoForm.url.$pristine" class="help-block text-warning">URL needs http://</pre>
-    </form>
-    <br>
+    <hr>
     <!--<pre>Sorting predicate = {{predicate}}; reverse = {{reverse}}</pre>-->
 
     <table class="table table-hover table-condensed">
@@ -91,9 +116,11 @@
             <td>{{video.attributes.vote_tally + ' Votes'}}</td>
             <td>
                 <div class="btn-group btn-group-xs" role="group">
-                    <button class="btn btn-success" ng-disabled="isWeekend() || checked" ng-click="voteOne(video, 1)"><span
+                    <button class="btn btn-success" ng-disabled="isWeekend() || checked"
+                            ng-click="voteOne(video, 1)"><span
                             class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></button>
-                    <button class="btn btn-danger" ng-disabled="isWeekend() || checked" ng-click="voteOne(video, -1)"><span
+                    <button class="btn btn-danger" ng-disabled="isWeekend() || checked"
+                            ng-click="voteOne(video, -1)"><span
                             class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
                 </div>
             </td>

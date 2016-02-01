@@ -14,13 +14,14 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
     $scope.isActive = 0;
     $scope.isWeekBtnNum = 0;
     $scope.today = new Date(Date.now());
+    $scope.vidVote = [];
 
 
-    $scope.activeButton = function(num) {
+    $scope.activeButton = function (num) {
         $scope.isActive = num;
     };
 
-    $scope.activeWeekBtn = function(num) {
+    $scope.activeWeekBtn = function (num) {
         $scope.isWeekBtnNum = num;
     }
 
@@ -54,7 +55,7 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
         console.log(newVideoForm);
 
 
-        $scope.videos.every( function(vid){
+        $scope.videos.every(function (vid) {
             //console.log(vid);
             if (vid.attributes.url == newVideoForm.url) {
                 console.log('its dup');
@@ -100,23 +101,34 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
         });
     };
 
-
     // Add or minus ONE vote
 
     $scope.voteOne = function (vid, num) {
-        console.log(vid);
-
-        var vidVote = {};
+        console.log('here is voteOne func info click', vid);
 
         $scope.vote = {
             opinion: num
         };
 
         $http.get('https://proofapi.herokuapp.com/videos/' + vid.id + '/votes', {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
-            vidVote = response.data.data;
-            console.log('here is the video info', vidVote);
+            $scope.vidVote = response.data.data;
+            //console.log('here is the video info', $scope.vidVote, new Date($scope.vidVote[0].attributes.created_at).getUTCDay(), $scope.today.getUTCDay());
 
-            if (vidVote.length === 0 || new Date(vidVote[0].attributes.created_at).getDay() != $scope.today.getDay()) {
+
+            if ($scope.vidVote.length === 0 ||
+
+                $scope.vidVote.some(function (vid) {
+                    console.log(vid);
+                    if (vid.attributes.created_at.slice(0, 10) == $scope.today.toISOString().slice(0, 10)) {
+                        //console.log('its dup');
+                        //alert("Sorry, no duplicate votes allowed");
+                        $scope.vidVote = [];
+                        return false;
+                    }
+                })
+
+            )
+            {
                 $http.post('https://proofapi.herokuapp.com/videos/' + vid.id + '/votes', $scope.vote, {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
                     console.log('new vote added', response);
                     $scope.getVideos();
@@ -124,7 +136,7 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
             } else {
                     console.log('dup vote');
                     alert("Sorry, One Vote per Video per Day");
-                    vidVote = {};
+                    $scope.vidVote = [];
             }
         });
     };
@@ -132,6 +144,7 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
     //GET all the videos
     $scope.getVideos = function () {
         $http.get('https://proofapi.herokuapp.com/videos', {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
+            $scope.limitNumber = null;
             $scope.videos = response.data.data;
             console.log($scope.videos);
             $scope.order('attributes.created_at', true);
@@ -145,7 +158,6 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
             console.log($scope.votes);
         });
     };
-
 
     $scope.getVideos();
     $scope.getVotes();
