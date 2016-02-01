@@ -9,13 +9,31 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
     $scope.vote = {};
     $scope.videos = [];
     $scope.checked = false;
+    $scope.limitNumber = null;
+    $scope.isActive = 0;
+    $scope.isWeekBtnNum = 0;
 
-    $scope.order = function (predicate) {
+    $scope.activeButton = function(num) {
+        $scope.isActive = num;
+    };
 
-        console.log(predicate);
+    $scope.activeWeekBtn = function(num) {
+        $scope.isWeekBtnNum = num;
+    }
+
+    $scope.order = function (predicate, tf) {
+
+        console.log(predicate, tf);
+
+        if (tf === undefined) {
+            $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+
+        } else {
+            $scope.reverse = tf;
+        }
 
         $scope.predicate = predicate;
-        $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+
         $scope.videos = orderBy($scope.videos, predicate, $scope.reverse);
     };
 
@@ -39,13 +57,15 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
                 console.log('its dup');
                 alert("Sorry, no duplicate videos allowed");
                 $scope.video = {};
+                $scope.newVideoForm.$setPristine();
+                $scope.newVideoForm.$setUntouched();
                 return;
             } else {
 
                 $scope.video = {
                     title: newVideoForm.title,
                     url: newVideoForm.url,
-                    slug: newVideoForm.title.trim().toLowerCase().replace(/\ /gi, '-')
+                    slug: newVideoForm.title.trim().toLowerCase().replace(/\W/gi, '-')
                 };
 
                 $http.post('https://proofapi.herokuapp.com/videos', $scope.video, {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
@@ -54,6 +74,8 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
                 });
                 console.log($scope.video);
                 $scope.video = {};
+                $scope.newVideoForm.$setPristine();
+                $scope.newVideoForm.$setUntouched();
                 $scope.getVideos();
 
             }
@@ -95,7 +117,7 @@ myApp.controller('myCtrl', ['$scope', '$http', '$filter', function ($scope, $htt
         $http.get('https://proofapi.herokuapp.com/videos', {headers: {'X-Auth-Token': 'ZU2nsMBQqKnvEwPbKsczgJEv'}}).then(function (response) {
             $scope.videos = response.data.data;
             console.log($scope.videos);
-            $scope.order('attributes.created_at');
+            $scope.order('attributes.created_at', true);
         });
     };
 
